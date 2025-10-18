@@ -11,7 +11,7 @@
 <img width="2563" height="29" alt="image" src="https://github.com/user-attachments/assets/b808d1b1-5d3e-4a0a-b0af-6f3fd65e729d" />
 
 
-# Custom Wallpaper Picker
+# Custom wallpaper picker
 **Written in python with tkinter + pillow**
 <img width="1714" height="1085" alt="image" src="https://github.com/user-attachments/assets/5231bcc6-3d54-4df2-b6db-eade76789772" />
 
