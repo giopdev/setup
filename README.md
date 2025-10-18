@@ -1,7 +1,7 @@
 <img width="1252" height="478" alt="image" src="https://github.com/user-attachments/assets/d12a9780-f6eb-4617-b7ad-f2069b222be8" />
 
 # Repo for my linux dotfiles
-**The *setup* is my desktop configuration that uses Hyprland on Arch Linux. The goal is a minimal setup that uses bespoke and quality scripts for changing settings**
+**The *setup* is my desktop configuration that uses Hyprland on Arch Linux. The goal is a minimal setup that uses bespoke and quality scripts for changing settings.**
 
 # Overview
 <img width="2560" height="1441" alt="image" src="https://github.com/user-attachments/assets/2af1c48d-a281-417b-b94a-ca630d18630b" />
