@@ -1,0 +1,289 @@
+/* === GLOBAL RESETS === */
+* {
+	border: none;
+	border-radius: 0px;
+	font-family: Iosevka, FontAwesome, Noto Sans CJK;
+	font-size: 12px;
+	font-style: normal;
+	min-height: 0;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+/* === WAYBAR WINDOW === */
+window#waybar {
+	background: rgba(30, 30, 46, 0.0);
+	color: #80aed1;
+}
+
+/* === MARGIN GROUPS === */
+/* All modules and sections: no top/bottom margin, keep side spacing */
+#workspaces,
+#tray,
+#cpu,
+#memory,
+#disk,
+#custom-hyprpicker,
+#custom-playerctl,
+#custom-playerlabel,
+#window,
+#custom-wf-recorder,
+.modules-right,
+.modules-left,
+.modules-center,
+#custom-date,
+#clock,
+#battery,
+#pulseaudio,
+#network,
+#custom-randwall,
+#custom-launcher,
+#backlight {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+/* Common side margins for modules (adjust as needed) */
+#workspaces,
+#tray,
+#cpu,
+#memory,
+#disk,
+#custom-hyprpicker {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+#custom-playerctl,
+#custom-playerlabel,
+#window,
+#custom-wf-recorder {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+#custom-date,
+#clock,
+#battery,
+#pulseaudio,
+#network,
+#custom-randwall,
+#custom-launcher {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+/* Special cases */
+#clock {
+	margin-left: 10px;
+	margin-right: 0px;
+}
+
+#custom-launcher {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+#custom-randwall {
+	margin-right: 0px;
+}
+
+#network {
+	margin-right: 5px;
+}
+
+#pulseaudio {
+	margin-left: 0px;
+}
+
+#pulseaudio.muted {
+	margin-left: 0px;
+}
+
+#backlight {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+/* === MODULE STYLES === */
+#workspaces {
+	background: #282828;
+	padding: 0px 5px;
+	border-radius: 16px;
+	border: solid 0px #f4d9e1;
+	font-weight: normal;
+	font-style: normal;
+}
+
+#workspaces button {
+	padding: 0px 5px;
+	border-radius: 16px;
+	color: #80aed1;
+}
+
+#workspaces button.active {
+	color: #0091ff;
+	background-color: transparent;
+	border-radius: 16px;
+}
+
+#workspaces button:hover {
+	background-color: #80aed1;
+	color: black;
+	border-radius: 16px;
+}
+
+#custom-date,
+#clock,
+#battery,
+#pulseaudio,
+#network,
+#custom-randwall,
+#custom-launcher {
+	background: transparent;
+	padding: 5px 5px;
+	border-radius: 8px;
+	border: solid 0px #f4d9e1;
+}
+
+#custom-date {
+	color: #80aed1;
+}
+
+#custom-power {
+	color: #24283b;
+	background-color: #db4b4b;
+	border-radius: 5px;
+	margin-right: 10px;
+	margin-left: 0px;
+	padding: 5px 10px;
+}
+
+#tray {
+	background: #282828;
+	border-radius: 16px;
+	padding: 0px 5px;
+}
+
+#clock {
+	color: #80aed1;
+	background-color: #282828;
+	border-radius: 0px 0px 0px 24px;
+	padding-left: 13px;
+	padding-right: 15px;
+	font-weight: bold;
+}
+
+#battery {
+	color: #d0dec1;
+}
+
+#battery.charging {
+	color: #c0f783;
+}
+
+#battery.warning:not(.charging) {
+	background-color: #8f1129;
+	color: #24283b;
+}
+
+#backlight {
+	background-color: #24283b;
+	color: #db4b4b;
+	border-radius: 0px;
+	padding: 0px 0px;
+}
+
+#network {
+	color: #80aed1;
+	border-radius: 8px;
+}
+
+.modules-right,
+.modules-left,
+.modules-center {
+	background-color: #282828;
+	border-radius: 6px;
+}
+
+#pulseaudio {
+	color: #80aed1;
+	border-radius: 8px;
+}
+
+#pulseaudio.muted {
+	background: transparent;
+	color: #928374;
+	border-radius: 8px;
+}
+
+#custom-randwall {
+	color: #80aed1;
+	border-radius: 8px;
+}
+
+#custom-launcher {
+	color: #80aed1;
+	background-color: #282828;
+	border-radius: 100px;
+	padding: 0px 9px;
+	font-size: 18px;
+}
+
+#custom-launcher button:hover {
+	background-color: #FB4934;
+	color: transparent;
+	border-radius: 8px;
+	margin-right: -5px;
+	margin-left: 10px;
+}
+
+#custom-playerctl {
+	background: #282828;
+	padding-left: 15px;
+	padding-right: 14px;
+	border-radius: 16px;
+	font-weight: normal;
+	font-style: normal;
+	font-size: 16px;
+	color: #80aed1;
+}
+
+#custom-playerlabel {
+	background: transparent;
+	padding-left: 10px;
+	padding-right: 15px;
+	border-radius: 16px;
+	font-weight: normal;
+	font-style: normal;
+}
+
+#window {
+	background: #282828;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-radius: 16px;
+	font-weight: normal;
+	font-style: normal;
+}
+
+#custom-wf-recorder {
+	padding: 0 20px;
+	color: #80aed1;
+	background-color: #1E1E2E;
+}
+
+#cpu,
+#memory,
+#disk,
+#custom-hyprpicker {
+	background-color: #282828;
+	color: #80aed1;
+	border-radius: 16px;
+	padding: 0px 10px;
+	font-weight: bold;
+}
+
+#custom-hyprpicker {
+	padding: 0px 11px 0px 9px;
+}
