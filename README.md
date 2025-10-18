@@ -1,4 +1,5 @@
-<img width="1252" height="478" alt="image" src="https://github.com/user-attachments/assets/d12a9780-f6eb-4617-b7ad-f2069b222be8" />
+<img width="1036" height="380" alt="ascii-art-text" src="https://github.com/user-attachments/assets/449594aa-1c4d-4256-b455-4732593df60e" />
+
 
 **The *setup* is my desktop configuration that uses Hyprland on Arch Linux. The goal is a minimal setup that uses bespoke and quality scripts for changing settings.**
 
