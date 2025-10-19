@@ -13,7 +13,7 @@
 
 # Custom wallpaper picker
 **Written in python with tkinter + pillow**
-<img width="1714" height="1085" alt="image" src="https://github.com/user-attachments/assets/5231bcc6-3d54-4df2-b6db-eade76789772" />
+<img width="1700" height="1069" alt="image" src="https://github.com/user-attachments/assets/0f1a722e-da9d-45a6-96fe-7a8753d699ec" />
 
 
 # Usage
