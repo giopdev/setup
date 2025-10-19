@@ -12,18 +12,19 @@ import tkinter as tk
 from PIL import Image, ImageTk, ImageSequence
 
 # Theme
-COL_BG = "#2b2b2b"
-COL_FRAME = "#3a3a3a"
-COL_HOVER = "#4a4a4a"
-COL_OVERLAY_BG = "#1f1f1f"  # solid; Tk has no alpha in hex colors
-COL_PREVIEW_BG = "#2b2b2b"
+COL_BG = "#1f1f1f"
+COL_FRAME = "#1f1f1f"
+COL_HOVER = "#2b2b2b"
+COL_OVERLAY_BG = "#1f1f1f"
+COL_PREVIEW_BG = "#3a3a3a"
 
 # Config
 WALL_DIR = os.environ.get("WALL_DIR", str(Path.home() / "images_to_paper"))
-LAST_FILE = os.environ.get("LAST_FILE", str(
-    Path.home() / ".cache" / "last_wallpaper"))
+LAST_FILE = os.environ.get(
+    "LAST_FILE", str(Path.home() / ".cache" / "last_wallpaper")
+)
 SUPPORTED_EXT = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"}
-THUMB_SIZE: Tuple[int, int] = (360, 202)
+THUMB_SIZE: Tuple[int, int] = (360, 203)
 COLUMNS = int(os.environ.get("COLUMNS", "4"))
 SWWW_ARGS = [
     "--transition-type",
@@ -34,8 +35,12 @@ SWWW_ARGS = [
     os.environ.get("SWWW_FPS", "144"),
 ]
 
+RESAMPLE = Image.BILINEAR
+
 # Threading
-MAX_WORKERS = max(2, int(os.environ.get("WALLPICKER_WORKERS", "4")))
+MAX_WORKERS = 4
+# Dedicated background prefetch worker for animations
+PREFETCH_WORKERS = 6
 
 
 def find_images(dir_path: Path) -> List[Path]:
@@ -48,14 +53,30 @@ def find_images(dir_path: Path) -> List[Path]:
     return out
 
 
-def _letterbox(im: Image.Image, size: tuple[int, int]) -> Image.Image:
+def _resize_cover_16x9(im: Image.Image, size: tuple[int, int]) -> Image.Image:
+    # Scale to fill and center-crop to exactly the requested size, preserving aspect
+    target_w, target_h = size
     im2 = im.copy()
-    im2.thumbnail(size, Image.LANCZOS)
-    bg = Image.new("RGBA" if im2.mode == "RGBA" else "RGB", size, (43, 43, 43))
-    x = (size[0] - im2.width) // 2
-    y = (size[1] - im2.height) // 2
-    bg.paste(im2, (x, y))
-    return bg.convert("RGB")
+    if im2.mode not in ("RGB", "RGBA"):
+        im2 = im2.convert("RGB")
+
+    src_w, src_h = im2.size
+    # Compute scale to cover the target box
+    scale = max(target_w / src_w, target_h / src_h)
+    new_w, new_h = int(round(src_w * scale)), int(round(src_h * scale))
+    im2 = im2.resize((new_w, new_h), RESAMPLE)
+
+    # Center-crop to target size
+    left = max(0, (new_w - target_w) // 2)
+    top = max(0, (new_h - target_h) // 2)
+    im2 = im2.crop((left, top, left + target_w, top + target_h))
+
+    # If RGBA, composite onto a solid background to avoid Tk transparency issues
+    if im2.mode == "RGBA":
+        bg = Image.new("RGB", (target_w, target_h), (43, 43, 43))
+        bg.paste(im2, (0, 0), im2)
+        return bg
+    return im2
 
 
 def build_static_thumb(path: Path, size: tuple[int, int]) -> ImageTk.PhotoImage:
@@ -63,13 +84,15 @@ def build_static_thumb(path: Path, size: tuple[int, int]) -> ImageTk.PhotoImage:
         im = Image.open(path)
         if im.mode not in ("RGB", "RGBA"):
             im = im.convert("RGB")
-        frame = _letterbox(im, size)
+        frame = _resize_cover_16x9(im, size)
     except Exception:
         frame = Image.new("RGB", size, (70, 70, 70))
     return ImageTk.PhotoImage(frame)
 
 
-def load_animation_frames(path: Path, size: tuple[int, int]) -> tuple[list[ImageTk.PhotoImage], list[int]]:
+def load_animation_frames(
+    path: Path, size: tuple[int, int]
+) -> tuple[list[ImageTk.PhotoImage], list[int]]:
     try:
         im = Image.open(path)
         is_animated = getattr(im, "is_animated", False)
@@ -85,7 +108,7 @@ def load_animation_frames(path: Path, size: tuple[int, int]) -> tuple[list[Image
             dur = frame.info.get("duration", im.info.get("duration", 100))
             if not isinstance(dur, int) or dur <= 0:
                 dur = 100
-            framed = _letterbox(frame, size)
+            framed = _resize_cover_16x9(frame, size)
             frames.append(ImageTk.PhotoImage(framed))
             durs.append(int(dur))
         if not frames:
@@ -99,8 +122,12 @@ def load_animation_frames(path: Path, size: tuple[int, int]) -> tuple[list[Image
 
 def ensure_swww_ready() -> bool:
     try:
-        subprocess.run(["swww", "query"], stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL, check=True)
+        subprocess.run(
+            ["swww", "query"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True,
+        )
         return True
     except Exception:
         try:
@@ -132,7 +159,9 @@ class TileAnim:
         self.job: Optional[str] = None
         self.active = False
 
-    def set_frames(self, frames: list[ImageTk.PhotoImage], durations: list[int]):
+    def set_frames(
+        self, frames: list[ImageTk.PhotoImage], durations: list[int]
+    ):
         self.frames = frames
         self.durations = durations
         self.idx = 0
@@ -170,7 +199,9 @@ class PreviewAnim:
         self.job: Optional[str] = None
         self.active = False
 
-    def set_frames(self, frames: list[ImageTk.PhotoImage], durations: list[int]):
+    def set_frames(
+        self, frames: list[ImageTk.PhotoImage], durations: list[int]
+    ):
         self.frames = frames
         self.durations = durations
         self.idx = 0
@@ -207,17 +238,16 @@ class PickerApp:
         self.root.configure(bg=COL_BG)
 
         self.executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
+        self.prefetch_executor = ThreadPoolExecutor(
+            max_workers=PREFETCH_WORKERS)
 
         # Canvas (no visible scrollbar)
         self.canvas = tk.Canvas(
-            root, highlightthickness=0, bg=COL_BG, bd=0, relief="flat")
+            root, highlightthickness=0, bg=COL_BG, bd=0, relief="flat"
+        )
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.on_canvas_configure)
-        self.canvas.bind_all("<MouseWheel>", self.on_wheel)
-        self.canvas.bind_all(
-            "<Button-4>", lambda e: self.canvas.yview_scroll(-1, "units"))
-        self.canvas.bind_all(
-            "<Button-5>", lambda e: self.canvas.yview_scroll(1, "units"))
+        self._bind_scrolling()
 
         # Grid frame
         self.grid_frame = tk.Frame(
@@ -241,17 +271,34 @@ class PickerApp:
         self.preview_anim = PreviewAnim(self.preview_label)
         self.preview_loading_future: Optional[Future] = None
 
+        # Track current preview state to avoid race conditions
+        self.current_preview_path: Optional[Path] = None
+        self.current_preview_token: int = 0  # increment each preview open
+
         # Close overlay on Esc or click/right-click anywhere on overlay/preview
         root.bind("<Escape>", self._esc_handler)
         for w in (self.overlay, self.preview_wrap, self.preview_label):
             w.bind("<Button-3>", lambda e: self.hide_preview())
             w.bind("<Button-1>", lambda e: self.hide_preview())
 
+        # Consume scroll events while overlay is visible (lock scrolling)
+        for w in (self.overlay, self.preview_wrap, self.preview_label):
+            w.bind("<MouseWheel>", lambda e: "break")
+            w.bind("<Button-4>", lambda e: "break")
+            w.bind("<Button-5>", lambda e: "break")
+
         self.files = files
         self.thumb_cache: dict[Path, ImageTk.PhotoImage] = {}
         self.anim_labels: list[tk.Label] = []
 
+        # Cache for animated frames: key = (path, size_tuple)
+        self.anim_cache: dict[
+            tuple[Path, tuple[int, int]],
+            tuple[list[ImageTk.PhotoImage], list[int]],
+        ] = {}
+
         self.populate()
+        self._start_background_prefetch()
 
         # Pause/resume animations with focus
         root.bind("<FocusOut>", self.pause_all)
@@ -272,11 +319,26 @@ class PickerApp:
                 self.preview_loading_future.cancel()
         except Exception:
             pass
-        try:
-            self.executor.shutdown(wait=False, cancel_futures=True)
-        except Exception:
-            pass
+        for ex in (self.executor, self.prefetch_executor):
+            try:
+                ex.shutdown(wait=False, cancel_futures=True)
+            except Exception:
+                pass
         self.root.destroy()
+
+    def _bind_scrolling(self):
+        # Rebind canvas/global scrolling
+        self.canvas.bind_all("<MouseWheel>", self.on_wheel)
+        self.canvas.bind_all(
+            "<Button-4>", lambda e: self.canvas.yview_scroll(-1, "units"))
+        self.canvas.bind_all(
+            "<Button-5>", lambda e: self.canvas.yview_scroll(1, "units"))
+
+    def _unbind_scrolling(self):
+        # Remove canvas/global scrolling while overlay is visible
+        self.canvas.unbind_all("<MouseWheel>")
+        self.canvas.unbind_all("<Button-4>")
+        self.canvas.unbind_all("<Button-5>")
 
     def _visible_region(self) -> tuple[int, int, int, int]:
         x0 = int(self.canvas.canvasx(0))
@@ -352,23 +414,30 @@ class PickerApp:
                 img_lbl._anim = anim
                 self.anim_labels.append(img_lbl)
 
-                def done_cb(fut: Future, lbl=img_lbl, a=anim, path=p):
-                    try:
-                        frames, durs = fut.result()
-                    except Exception:
-                        frames, durs = [self.thumb_cache[path]], [1000]
+                key = (p, THUMB_SIZE)
+                if key in self.anim_cache:
+                    frames, durs = self.anim_cache[key]
+                    anim.set_frames(frames, durs)
+                    anim.start()
+                else:
+                    def done_cb(fut: Future, lbl=img_lbl, a=anim, path=p, k=key):
+                        try:
+                            frames, durs = fut.result()
+                        except Exception:
+                            frames, durs = [self.thumb_cache[path]], [1000]
 
-                    def apply_frames():
-                        if not lbl.winfo_exists():
-                            return
-                        a.set_frames(frames, durs)
-                        a.start()
+                        def apply_frames():
+                            if not lbl.winfo_exists():
+                                return
+                            a.set_frames(frames, durs)
+                            a.start()
+                            self.anim_cache[k] = (frames, durs)
 
-                    lbl.after(0, apply_frames)
+                        lbl.after(0, apply_frames)
 
-                fut = self.executor.submit(
-                    load_animation_frames, p, THUMB_SIZE)
-                fut.add_done_callback(done_cb)
+                    fut = self.executor.submit(
+                        load_animation_frames, p, THUMB_SIZE)
+                    fut.add_done_callback(done_cb)
             else:
                 img_lbl._anim = None
 
@@ -376,6 +445,7 @@ class PickerApp:
                 a: TileAnim = getattr(lbl, "_anim", None)
                 if a:
                     a.stop()
+
             img_lbl.bind("<Destroy>", on_destroy)
 
             img_lbl.bind("<Enter>", lambda _e,
@@ -386,6 +456,7 @@ class PickerApp:
             def on_click(_e=None, fp=p):
                 set_wallpaper(fp)
                 self._on_close()
+
             img_lbl.bind("<Button-1>", on_click)
 
         for cc in range(COLUMNS):
@@ -401,7 +472,14 @@ class PickerApp:
     def show_preview(self, path: Path):
         # Show overlay at current viewport
         self.canvas.itemconfigure(self.overlay_id, state="normal")
+        # Disable global/canvas scrolling while preview is open
+        self._unbind_scrolling()
         self._position_overlay_to_view()
+
+        # Track current preview and token
+        self.current_preview_path = path
+        self.current_preview_token += 1
+        token = self.current_preview_token
 
         # Determine target preview size (within margins)
         w = int(self.canvas.itemcget(self.overlay_id, "width"))
@@ -419,41 +497,54 @@ class PickerApp:
                 pass
             self.preview_loading_future = None
 
-        # 1) Show static preview immediately
+        # 1) Show static preview immediately (cover + center-crop)
         try:
             im = Image.open(path)
-            im.thumbnail((box_w, box_h), Image.LANCZOS)
-            bg = Image.new("RGB", (box_w, box_h), COL_PREVIEW_BG)
-            x = (box_w - im.width) // 2
-            y = (box_h - im.height) // 2
-            bg.paste(im, (x, y))
+            if im.mode not in ("RGB", "RGBA"):
+                im = im.convert("RGB")
+            im = _resize_cover_16x9(im, (box_w, box_h))
         except Exception:
-            bg = Image.new("RGB", (box_w, box_h), COL_PREVIEW_BG)
-        static_photo = ImageTk.PhotoImage(bg)
+            im = Image.new("RGB", (box_w, box_h), COL_PREVIEW_BG)
+        static_photo = ImageTk.PhotoImage(im)
         self.preview_label.configure(image=static_photo)
         self.preview_label.image = static_photo
 
-        # 2) If animated, load frames in background and replace
+        # 2) If animated, load frames in background and replace (cover) with cache
         if path.suffix.lower() in (".gif", ".webp"):
-            fut = self.executor.submit(
-                load_animation_frames, path, (box_w, box_h))
-            self.preview_loading_future = fut
-
-            def done_cb(f: Future):
-                try:
-                    frames, durs = f.result()
-                except Exception:
-                    frames, durs = [], []
-
-                def apply():
-                    # If overlay closed or nothing loaded, keep static
-                    if not self.is_preview_visible() or not frames:
-                        return
+            key = (path, (box_w, box_h))
+            if key in self.anim_cache:
+                # Only apply if still the same preview request
+                if self.is_preview_visible() and token == self.current_preview_token:
+                    frames, durs = self.anim_cache[key]
                     self.preview_anim.set_frames(frames, durs)
                     self.preview_anim.start()
-                self.preview_label.after(0, apply)
+            else:
+                fut = self.executor.submit(
+                    load_animation_frames, path, (box_w, box_h))
+                self.preview_loading_future = fut
 
-            fut.add_done_callback(done_cb)
+                def done_cb(f: Future, k=key, expected_token=token, expected_path=path):
+                    try:
+                        frames, durs = f.result()
+                    except Exception:
+                        frames, durs = [], []
+
+                    def apply():
+                        # Abort if overlay not visible, or token/path mismatch (stale)
+                        if (
+                            not self.is_preview_visible()
+                            or expected_token != self.current_preview_token
+                            or self.current_preview_path != expected_path
+                            or not frames
+                        ):
+                            return
+                        self.preview_anim.set_frames(frames, durs)
+                        self.preview_anim.start()
+                        self.anim_cache[k] = (frames, durs)
+
+                    self.preview_label.after(0, apply)
+
+                fut.add_done_callback(done_cb)
 
     def hide_preview(self):
         self.preview_anim.stop()
@@ -463,10 +554,75 @@ class PickerApp:
             except Exception:
                 pass
             self.preview_loading_future = None
+        # Clear current preview tracking
+        self.current_preview_path = None
+        self.current_preview_token += 1  # invalidate any in-flight callbacks
+        # Re-enable global/canvas scrolling
+        self._bind_scrolling()
         self.canvas.itemconfigure(self.overlay_id, state="hidden")
         self.preview_label.configure(image=None)
         self.preview_label.image = None
     # End overlay
+
+    # Background prefetch of animations for thumbnails and previews
+    def _start_background_prefetch(self):
+        anim_paths = [p for p in self.files if p.suffix.lower()
+                      in (".gif", ".webp")]
+        if not anim_paths:
+            return
+
+        # Estimate a preview target size based on initial window size (minus margins)
+        try:
+            self.root.update_idletasks()
+            canvas_w = self.canvas.winfo_width() or 1280
+            canvas_h = self.canvas.winfo_height() or 800
+        except Exception:
+            canvas_w, canvas_h = 1280, 800
+        margin = 40
+        preview_size = (max(100, canvas_w - 2 * margin),
+                        max(100, canvas_h - 2 * margin))
+
+        # Submit prefetch jobs to dedicated executor
+        def prefetch_one(path: Path):
+            results = {}
+            try:
+                # Thumbnail cache
+                k_thumb = (path, THUMB_SIZE)
+                if k_thumb not in self.anim_cache:
+                    frames_t, durs_t = load_animation_frames(path, THUMB_SIZE)
+                    results[k_thumb] = (frames_t, durs_t)
+
+                # Preview cache
+                k_prev = (path, preview_size)
+                if k_prev not in self.anim_cache:
+                    frames_p, durs_p = load_animation_frames(
+                        path, preview_size)
+                    results[k_prev] = (frames_p, durs_p)
+            except Exception:
+                pass
+            return results
+
+        futures = [self.prefetch_executor.submit(
+            prefetch_one, p) for p in anim_paths]
+
+        # When each job completes, store into cache on the main thread to keep references safe
+        def handle_done(fut: Future):
+            try:
+                res = fut.result()
+            except Exception:
+                res = {}
+            if not res:
+                return
+
+            def apply():
+                for k, v in res.items():
+                    if k not in self.anim_cache:
+                        self.anim_cache[k] = v
+
+            self.root.after(0, apply)
+
+        for fut in futures:
+            fut.add_done_callback(handle_done)
 
 
 def main():
