@@ -25,15 +25,11 @@ PACKAGES=(
   ttf-nerd-fonts-symbols-mono
   woff2-font-awesome
   xorg-fonts-encodings
-  python3
   neovim
-  swww
   waybar
   dunst
   kitty
   wofi
-  python-tkinter
-  python-pillow
 )
 
 echo "Updating System..."

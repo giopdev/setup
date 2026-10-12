@@ -7,13 +7,8 @@
 <img width="2560" height="1441" alt="image" src="https://github.com/user-attachments/assets/2af1c48d-a281-417b-b94a-ca630d18630b" />
 
 
-# Minimal [waybar](https://github.com/Alexays/Waybar) with media and wallpaper controls
+# Minimal [waybar](https://github.com/Alexays/Waybar) with media controls
 <img width="2563" height="29" alt="image" src="https://github.com/user-attachments/assets/b808d1b1-5d3e-4a0a-b0af-6f3fd65e729d" />
-
-
-# Custom wallpaper picker
-**Written in python with tkinter + pillow**
-<img width="1696" height="1068" alt="image" src="https://github.com/user-attachments/assets/fe8ae017-dfa2-4f74-bd9c-25a7134695f7" />
 
 
 # Usage
@@ -23,6 +18,8 @@ cp -r ./.config/* ~/.config/
 ```
 
 # TODO
+Integrate theming with aether.
+
 [spotify-player](https://github.com/aome510/spotify-player) config
 
 [fastfetch](https://github.com/fastfetch-cli/fastfetch) config

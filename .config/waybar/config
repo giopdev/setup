@@ -8,7 +8,7 @@
     "margin-right": 0,
     "modules-left": ["hyprland/workspaces", "custom/playerctl", "custom/playerlabel"],
     "modules-center": ["cpu", "memory", "disk"],
-    "modules-right": ["tray", "custom/randwall", "network", "pulseaudio", "battery", "clock"],
+    "modules-right": ["tray", "network", "pulseaudio", "battery", "clock"],
     // Modules configuration 
 	"clock": {
 		"format": "  {:%H:%M}",
@@ -135,12 +135,6 @@
     "on-scroll-down": "bash ~/.scripts/volume down",
     "scroll-step": 5,
 		"on-click-right": "pavucontrol"
-  },
-  "custom/randwall": {
-    "format": "󰏘",
-    "on-click": "bash $HOME/.config/hypr/randwall.sh",
-    "on-click-right": "bash $HOME/.config/hypr/randwall_gif.sh",
-    "on-click-middle": "python3 $HOME/.config/hypr/picker.py"
   },
   "custom/launcher": {
     "format": "🌫",
