@@ -344,6 +344,13 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 
 -- Example window rules that are useful
 
+-- Float all Zoom windows, including meeting windows and dialogs.
+hl.window_rule({
+    name  = "float-zoom",
+    match = { class = "(?i)^(zoom.*|us[.]zoom[.].*)$" },
+    float = true,
+})
+
 local suppressMaximizeRule = hl.window_rule({
     -- Ignore maximize requests from all apps. You'll probably like this.
     name  = "suppress-maximize-events",
