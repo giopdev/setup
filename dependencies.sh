@@ -1,40 +1,52 @@
 #!/usr/bin/env bash
 
-PACKAGES=(
-  adobe-source-code-pro-fonts
-  adwaita-fonts
-  cantarell-fonts
+set -euo pipefail
+
+FONT_PACKAGES=(
   fontconfig
-  gnu-free-fonts
-  gsfonts
-  lib32-fontconfig
-  libfontenc
-  libxfont2
+  ttf-jetbrains-mono-nerd
+  ttf-3270-nerd
   noto-fonts
   noto-fonts-cjk
   noto-fonts-emoji
-  powerline-fonts
-  python-fonttools
-  sdl2_ttf
-  ttf-carlito
-  ttf-dejavu
-  ttf-jetbrains-mono
-  ttf-jetbrains-mono-nerd
-  ttf-liberation
-  ttf-nerd-fonts-symbols-common
-  ttf-nerd-fonts-symbols-mono
-  woff2-font-awesome
-  xorg-fonts-encodings
+)
+
+PACKAGES=(
+  "${FONT_PACKAGES[@]}"
+  python
+  git
+  base-devel
+  curl
+  unzip
+  tree-sitter-cli
+  ripgrep
+  hyprland
+  hyprpaper
+  hypridle
+  hyprlock
+  hyprlauncher
+  thunar
+  grim
+  slurp
+  wl-clipboard
+  brightnessctl
   neovim
   waybar
   dunst
   kitty
+  zellij
+  playerctl
+  wireplumber
+  pavucontrol
+  network-manager-applet
   wofi
 )
 
-echo "Updating System..."
-yay --noconfirm
-
 echo "Installing SETUP Dependencies..."
-sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
+if (( EUID == 0 )); then
+  pacman -S --needed --noconfirm "${PACKAGES[@]}"
+else
+  sudo pacman -S --needed --noconfirm "${PACKAGES[@]}"
+fi
+fc-cache -f
 echo "done"

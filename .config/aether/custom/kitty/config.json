@@ -1,0 +1,4 @@
+{
+    "template": "colors.conf",
+    "destination": "~/.config/kitty/aether-colors.conf"
+}

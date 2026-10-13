@@ -1,68 +1,28 @@
 [global]
-monitor = 1
-follow = none
-origin = top-right
-offset = (10, 50)
-
-width = (200, 360)
-height = (0, 200)
-notification_limit = 10
-
-font = Monospace 12
-padding = 8
-horizontal_padding = 12
-line_height = 0
-separator_height = 2
-separator_color = auto
-
-background = "#2b2b2b"
-foreground = "#eeeeee"
-frame_color = "#3a3a3a"
-frame_width = 1
-corner_radius = 8
-corners = all
-
-transparency = 10
-
-sort = true
-stack_duplicates = true
-hide_duplicate_count = true
-word_wrap = true
-markup = no
-show_indicators = yes
-ellipsize = end
-idle_threshold = 0
-show_age_threshold = -1
-
-icon_position = left
-max_icon_size = 64
-
-format = "%s\n%b"
-alignment = center
-vertical_alignment = center
-
-progress_bar = true
-progress_bar_height = 6
-progress_bar_min_width = 140
-progress_bar_max_width = 280
-progress_bar_frame_width = 1
-progress_bar_corner_radius = 6
-progress_bar_corners = all
+    follow = mouse
+    origin = top-right
+    offset = (12, 40)
+    width = (240, 360)
+    notification_limit = 5
+    font = Sans 11
+    padding = 12
+    horizontal_padding = 12
+    frame_width = 2
+    corner_radius = 6
+    icon_position = left
+    max_icon_size = 48
+    format = "<b>%s</b>\n%b"
+    markup = full
+    word_wrap = true
+    alignment = left
+    stack_duplicates = true
+    show_age_threshold = 60
 
 [urgency_low]
-timeout = 4
-background = "#2b2b2b"
-foreground = "#eeeeee"
-frame_color = "#3a3a3a"
+    timeout = 4
 
 [urgency_normal]
-timeout = 6
-background = "#2b2b2b"
-foreground = "#eeeeee"
-frame_color = "#3a3a3a"
+    timeout = 6
 
 [urgency_critical]
-timeout = 0
-background = "#2b2b2b"
-foreground = "#ffdddd"
-frame_color = "#cc5555"
+    timeout = 0

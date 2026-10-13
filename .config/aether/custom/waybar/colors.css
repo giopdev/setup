@@ -1,0 +1,9 @@
+@define-color background {background};
+@define-color foreground {foreground};
+@define-color accent {accent};
+@define-color muted {muted};
+@define-color red {red};
+@define-color green {green};
+@define-color yellow {yellow};
+@define-color selection {selection_background};
+@define-color selection_foreground {selection_foreground};

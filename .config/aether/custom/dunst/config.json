@@ -1,0 +1,4 @@
+{
+    "template": "colors.conf",
+    "destination": "~/.config/dunst/dunstrc.d/90-aether.conf"
+}

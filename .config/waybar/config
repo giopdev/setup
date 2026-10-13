@@ -1,18 +1,18 @@
 {
     "position": "top",
     "layer": "top",
-    "height": 14,
+    "height": 28,
     "margin-top": 0,
     "margin-bottom": 0,
     "margin-left": 0,
     "margin-right": 0,
     "modules-left": ["hyprland/workspaces", "custom/playerctl", "custom/playerlabel"],
     "modules-center": ["cpu", "memory", "disk"],
-    "modules-right": ["tray", "network", "pulseaudio", "battery", "clock"],
+    "modules-right": ["tray", "custom/aether", "network", "pulseaudio", "battery", "clock"],
     // Modules configuration 
 	"clock": {
 		"format": "  {:%H:%M}",
-		"tooltip": "true",
+		"tooltip": true,
         	"tooltip-format": "<big>{:%Y %B}</big>\n<tt><big>{calendar}</big></tt>",
         	"format-alt": "  {:%m/%d}"
 	},
@@ -22,10 +22,11 @@
         "active-only": false,
         "all-outputs": true,
         "disable-scroll": false,
-        "on-scroll-up": "hyprctl dispatch workspace -1",
-        "on-scroll-down": "hyprctl dispatch workspace +1",
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
 		"format": "{icon}",
 		"on-click": "activate",
+		"sort-by-number": true,
 		"format-icons": {
 //			"1": "一",
 //			"2": "二",
@@ -34,8 +35,7 @@
 //			"5": "五",
 			"urgent": "",
 			"active": "",
-			"default": "󰧞",
-    "sort-by-number": true
+			"default": "󰧞"
     },
     },
 
@@ -48,8 +48,8 @@
       "on-click": "playerctl previous",
       "on-click-right": "playerctl next",
       "format-icons": {
-        "Playing": "<span foreground='#80aed1'>󰒮 󰐌 󰒭</span>",
-        "Paused": "<span foreground='#626f78'>󰒮 󰏥 󰒭</span>"
+        "Playing": "󰒮 󰐌 󰒭",
+        "Paused": "󰒮 󰏥 󰒭"
       },
     },
 
@@ -62,8 +62,8 @@
       "on-click": "playerctl previous",
       "on-click-right": "playerctl next",
       "format-icons": {
-        "Playing": "<span foreground='#E5B9C6'>󰒮 󰐌 󰒭</span>",
-        "Paused": "<span foreground='#928374'>󰒮 󰏥 󰒭</span>"
+        "Playing": "󰒮 󰐌 󰒭",
+        "Paused": "󰒮 󰏥 󰒭"
       },
     },
 
@@ -74,7 +74,7 @@
             "critical": 15
         },
         "format":"{icon}  {capacity}%",
-        "format-charging": "{capacity}% ",
+        "format-charging": "{capacity}% 󰂄",
         "format-plugged": "{capacity}% ",
         "format-alt": "{icon} {time}",
         // "format-good": "", // An empty format will hide the module
@@ -103,10 +103,10 @@
 	
 	"network": {
         	"format-wifi": "󰤨",
-        	"format-ethernet": " {ifname}",
-        	"format-linked": " {ifname} (No IP)",
+          "format-ethernet": "󰈀 {ifname}",
+          "format-linked": "󰈀 {ifname} (No IP)",
         	"format-disconnected": "󰤭",
-        	"format-alt": " {ifname}: {ipaddr}/{cidr}",
+          "format-alt": "󰈀 {ifname}: {ipaddr}/{cidr}",
           "tooltip-format": "{essid}",
           "on-click-right": "nm-connection-editor"
 	},
@@ -130,11 +130,16 @@
 		"format-icons": {
 			"default": ["󰕿", "󰖀", "󰕾"]
 		},
-		"on-click": "bash ~/.scripts/volume mute",
-    "on-scroll-up": "bash ~/.scripts/volume up",
-    "on-scroll-down": "bash ~/.scripts/volume down",
+		"on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-up": "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
     "scroll-step": 5,
 		"on-click-right": "pavucontrol"
+  },
+  "custom/aether": {
+    "format": "󰏘",
+    "tooltip-format": "Open aether",
+    "on-click": "aether"
   },
   "custom/launcher": {
     "format": "🌫",
@@ -159,5 +164,4 @@
     "on-click": "hyprpicker -a -f hex",
     "on-click-right": "hyprpicker -a -f rgb"
   },
-  }
 }
