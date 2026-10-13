@@ -20,6 +20,10 @@ PACKAGES=(
   unzip
   tree-sitter-cli
   ripgrep
+  eza
+  starship
+  fzf
+  pandoc-cli
   hyprland
   hyprpaper
   hypridle

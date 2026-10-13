@@ -130,11 +130,13 @@ def render_template(content, colors):
 
 
 def operations(config_home, monitors):
-    planned = []
+    planned = [(Path.home() / ".bashrc", REPO / ".bashrc", None)]
     for relative in (
         "hypr/hyprpaper.conf", "hypr/apply-wallpaper.py",
         "waybar/config", "waybar/style.css",
         "kitty/kitty.conf", "dunst/dunstrc", "zellij/config.kdl",
+        "bash/fzf.sh",
+        "pandoc/md-preview.css",
         "nvim/init.lua", "nvim/nvim-pack-lock.json", "nvim/.stylua.toml",
     ):
         planned.append((config_home / relative, REPO / ".config" / relative, None))
@@ -164,8 +166,9 @@ def preflight(planned, config_home):
     if config_home.exists() and not config_home.is_dir():
         raise ValueError(f"Expected a config directory: {config_home}")
     for target, source, content in planned:
+        root = config_home if target.is_relative_to(config_home) else Path.home()
         for parent in target.parents:
-            if parent == config_home:
+            if parent == root:
                 break
             if parent.is_symlink():
                 raise ValueError(f"Refusing to write through directory symlink: {parent}. Use a real directory first.")
@@ -234,7 +237,8 @@ class Installation:
                 backups.mkdir(parents=True, exist_ok=True)
                 prefix = datetime.datetime.now().strftime("%Y%m%d-%H%M%S-")
                 self.backup = Path(tempfile.mkdtemp(prefix=prefix, dir=backups))
-            saved = self.backup / target.relative_to(self.config_home)
+            relative = target.relative_to(self.config_home) if target.is_relative_to(self.config_home) else Path("home") / target.relative_to(Path.home())
+            saved = self.backup / relative
             saved.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(target), str(saved))
         self.changed.append((target, saved))
@@ -256,7 +260,7 @@ class Installation:
 
     def finish(self):
         if self.backup:
-            manifest = {"config_home": str(self.config_home), "files": [
+            manifest = {"config_home": str(self.config_home), "home": str(Path.home()), "files": [
                 {"destination": str(target), "backup": str(saved) if saved else None}
                 for target, saved in self.changed
             ]}
@@ -302,7 +306,7 @@ def reload_session(config_home, state_home):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Install portable desktop and Neovim dotfiles.")
+    parser = argparse.ArgumentParser(description="Install portable desktop, Neovim, and Bash dotfiles.")
     parser.add_argument("--dry-run", action="store_true", help="Show changes without writing files or reloading applications")
     parser.add_argument("--no-reload", action="store_true", help="Install files without restarting or reloading the session")
     selection = parser.add_mutually_exclusive_group()

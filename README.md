@@ -1,7 +1,7 @@
 <img width="1036" height="380" alt="ascii-art-text" src="https://github.com/user-attachments/assets/449594aa-1c4d-4256-b455-4732593df60e" />
 
 Dotfiles for an Arch Linux desktop using Hyprland, Waybar, Kitty, Zellij,
-Dunst, and Neovim, with aether integration for desktop colors and wallpapers.
+Bash, Dunst, and Neovim, with aether integration for desktop colors and wallpapers.
 
 ## Install
 
