@@ -16,3 +16,14 @@ for monitor settings. Edit the checkout to update your settings. Removing it
 disables these custom configs; a small local loader keeps Hyprland usable by
 falling back to its system defaults (or a minimal desktop if none are available).
 Install aether separately to manage themes and wallpapers.
+
+Global Codex instructions live in `.codex/AGENTS.md` and are linked to
+`~/.codex/AGENTS.md` by the installer.
+
+## Workspace bar visibility
+
+**Super+B** toggles Waybar. When hidden, switching workspaces with **Super+0–9**,
+**Super+scroll**, or **Super+Tab** reveals it until Super is released. A visible
+bar stays visible; **Super+B** during a temporary reveal keeps it open.
+This uses [Hyprland release bindings](https://wiki.hypr.land/Configuring/Binds/#bind-flags)
+and [Waybar's visibility signal](https://man.archlinux.org/man/waybar.5.en#SIGNALS).

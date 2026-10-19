@@ -33,21 +33,31 @@ window#waybar {
 }
 
 #workspaces {
-    padding: 0 5px;
+    padding: 0 2px;
 }
 
 #workspaces button {
+    min-width: 14px;
+    margin: 4px 2px;
     padding: 0 5px;
-    color: @muted;
-    border-radius: 6px;
+    background: transparent;
+    color: alpha(@foreground, 0.65);
+    border-radius: 5px;
+    box-shadow: none;
+    text-shadow: none;
 }
 
 #workspaces button.active {
-    color: @accent;
+    padding: 0 9px;
+    background: @accent;
+    color: @background;
+    font-weight: bold;
 }
 
 #workspaces button.urgent {
+    background: alpha(@red, 0.16);
     color: @red;
+    box-shadow: inset 0 -2px @red;
 }
 
 #workspaces button:hover {

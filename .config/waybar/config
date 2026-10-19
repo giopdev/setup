@@ -6,7 +6,7 @@
     "margin-bottom": 0,
     "margin-left": 0,
     "margin-right": 0,
-    "modules-left": ["hyprland/workspaces", "custom/playerctl", "custom/playerlabel"],
+    "modules-left": ["ext/workspaces", "custom/playerctl", "custom/playerlabel"],
     "modules-center": ["cpu", "memory", "disk"],
     "modules-right": ["tray", "custom/aether", "network", "pulseaudio", "battery", "clock"],
     // Modules configuration 
@@ -18,25 +18,16 @@
 	},
 	
 
-	"hyprland/workspaces": {
+    // Use Wayland workspace activation; Hyprland's IPC dispatch now requires Lua.
+	"ext/workspaces": {
         "active-only": false,
         "all-outputs": true,
         "disable-scroll": false,
         "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
         "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
-		"format": "{icon}",
+		"format": "{name}",
 		"on-click": "activate",
-		"sort-by-number": true,
-		"format-icons": {
-//			"1": "一",
-//			"2": "二",
-//			"3": "三",
-//			"4": "四",
-//			"5": "五",
-			"urgent": "",
-			"active": "",
-			"default": "󰧞"
-    },
+		"sort-by-name": true,
     },
 
     "custom/playerctl": {

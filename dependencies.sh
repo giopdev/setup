@@ -32,16 +32,21 @@ PACKAGES=(
   thunar
   grim
   slurp
+  hyprshot
+  hyprpicker
   wl-clipboard
   brightnessctl
   neovim
   waybar
+  # Image decoding for Waybar tray icons.
+  glycin
   dunst
   kitty
   zellij
   playerctl
   wireplumber
   pavucontrol
+  blueman
   network-manager-applet
   wofi
 )

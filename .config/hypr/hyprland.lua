@@ -62,6 +62,7 @@ local lockScreen = "pidof hyprlock >/dev/null || hyprlock"
 hl.on("hyprland.start", function ()
     hl.exec_cmd("pidof hypridle >/dev/null || hypridle")
     hl.exec_cmd("pidof waybar >/dev/null || (systemctl --user start waybar.service || waybar)")
+    hl.exec_cmd("blueman-applet")
     hl.exec_cmd("python3 \"${XDG_CONFIG_HOME:-$HOME/.config}/hypr/apply-wallpaper.py\"")
 end)
 
@@ -111,8 +112,8 @@ hl.env("HYPRCURSOR_SIZE", "24")
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        gaps_in  = 5,
-        gaps_out = 20,
+        gaps_in  = 1,
+        gaps_out = 5,
 
         border_size = 4,
 
@@ -281,16 +282,60 @@ hl.device({
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
+local waybarTemporarilyShown = false
+local toggleWaybarCommand = "pkill -USR1 -x waybar"
+
+local function showWaybarForWorkspace()
+    if waybarTemporarilyShown then return end
+    for _, layer in ipairs(hl.get_layers({ namespace = "waybar" })) do
+        -- Waybar stays mapped when hidden, but moves from top (2) to bottom (1).
+        if layer.mapped and layer.layer == 2 then return end
+    end
+    waybarTemporarilyShown = true
+    hl.exec_cmd(toggleWaybarCommand)
+end
+
+local function hideTemporaryWaybar()
+    if not waybarTemporarilyShown then return end
+    waybarTemporarilyShown = false
+    hl.exec_cmd(toggleWaybarCommand)
+end
+
+local function bindWorkspace(key, dispatcher)
+    hl.bind(mainMod .. " + " .. key, function()
+        showWaybarForWorkspace()
+        hl.dispatch(dispatcher)
+    end)
+end
+
+-- Transparent release bindings survive workspace shortcuts pressed during the hold.
+-- Ignore extra modifiers so releasing Super also works while Shift is held.
+for _, key in ipairs({ "Super_L", "Super_R" }) do
+    hl.bind(mainMod .. " + " .. key, hideTemporaryWaybar, {
+        release = true, ignore_mods = true, non_consuming = true, transparent = true,
+    })
+end
+
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + return", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + B", function()
+    if waybarTemporarilyShown then
+        waybarTemporarilyShown = false
+    else
+        hl.exec_cmd(toggleWaybarCommand)
+    end
+end)
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd(lockScreen))
+-- Freeze the screen and copy a selected region as PNG for pasteimage.
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot --freeze -m region --clipboard-only"))
 local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+hl.bind(mainMod .. " + SHIFT + CTRL + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + minus", hl.dsp.exec_cmd("hyprctl reload"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 -- hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
@@ -304,17 +349,17 @@ hl.bind(mainMod .. " + J",  hl.dsp.focus({ direction = "down" }))
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
     local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
+    bindWorkspace(key, hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
 end
 
 -- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + tab",         hl.dsp.workspace.toggle_special("magic"))
+bindWorkspace("tab", hl.dsp.workspace.toggle_special("magic"))
 hl.bind(mainMod .. " + SHIFT + tab", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Scroll through existing workspaces with mainMod + scroll
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+bindWorkspace("mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+bindWorkspace("mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })

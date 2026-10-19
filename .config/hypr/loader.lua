@@ -23,4 +23,4 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" 
 hl.bind("SUPER + return", hl.dsp.exec_cmd("kitty"))
 hl.bind("SUPER + Q", hl.dsp.window.close())
 hl.bind("SUPER + R", hl.dsp.exec_cmd("hyprlauncher"))
-hl.bind("SUPER + M", hl.dsp.exit())
+hl.bind("SUPER + SHIFT + CTRL + M", hl.dsp.exit())
