@@ -17,9 +17,6 @@ disables these custom configs; a small local loader keeps Hyprland usable by
 falling back to its system defaults (or a minimal desktop if none are available).
 Install aether separately to manage themes and wallpapers.
 
-Global Codex instructions live in `.codex/AGENTS.md` and are linked to
-`~/.codex/AGENTS.md` by the installer.
-
 ## Workspace bar visibility
 
 **Super+B** toggles Waybar. When hidden, switching workspaces with **Super+0–9**,
