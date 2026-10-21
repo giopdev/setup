@@ -17,6 +17,14 @@ disables these custom configs; a small local loader keeps Hyprland usable by
 falling back to its system defaults (or a minimal desktop if none are available).
 Install aether separately to manage themes and wallpapers.
 
+## Markdown previews
+
+Run `md path/to/file.md` in Bash to open a styled Pandoc preview in your browser.
+Fenced code blocks labeled `mermaid` render as diagrams with a dark theme.
+Diagram rendering requires internet access to load Mermaid from jsDelivr;
+the diagram source is rendered locally in the browser. See the
+[Mermaid browser integration documentation](https://mermaid.js.org/config/usage.html).
+
 ## Workspace bar visibility
 
 **Super+B** toggles Waybar. When hidden, switching workspaces with **Super+0–9**,

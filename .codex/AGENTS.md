@@ -51,5 +51,15 @@ SystemName implements x feature with y, not z
 SystemName implements x feature with y
 ```
 
+## Figures and Diagrams
+- Do not link editable figure sources in documentation prose.
+- Prefer D2 for architecture and flow diagrams, Graphviz for dependency graphs and trees, PlantUML for sequence diagrams, and TikZ for precise mathematical or publication figures.
+- Keep editable figure sources alongside documentation and export to SVG (Scalable Vector Graphics) for Markdown or PDF for LaTeX. Use consistent typography, restrained colors, clear grouping, and labeled connections.
+- Use the figures in these papers as visual references; inspect the relevant figures when designing a similar illustration:
+  - https://dl.acm.org/doi/pdf/10.1145/3719027.3765036
+  - https://www.usenix.org/system/files/usenixsecurity25-gorter.pdf
+  - https://arxiv.org/pdf/2609.17525
+  - https://dl.acm.org/doi/pdf/10.1145/3689031.3717464
+
 ## Building, Running, and Testing
  - While testing is good, there is no need for endless useless smoke tests every time a minor change is made.

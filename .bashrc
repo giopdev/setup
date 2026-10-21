@@ -47,14 +47,16 @@ function md() {
     return 1
   fi
 
-  local name out
+  local name out pandoc_config
+  pandoc_config="${XDG_CONFIG_HOME:-$HOME/.config}/pandoc"
   name=$(basename "$1")
   out=$(mktemp --suffix=.html "${TMPDIR:-/tmp}/${name%.*}-XXX") || return
 
   pandoc "$1" -o "$out" \
     --standalone \
     --embed-resources \
-    --css=/home/gio/.config/pandoc/md-preview.css \
+    --css="$pandoc_config/md-preview.css" \
+    --include-after-body="$pandoc_config/mermaid.html" \
     --syntax-highlighting=pygments \
     --math-method=mathjax || return
 

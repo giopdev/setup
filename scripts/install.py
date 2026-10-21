@@ -139,7 +139,7 @@ def operations(config_home, monitors):
         "waybar/config", "waybar/style.css",
         "kitty/kitty.conf", "dunst/dunstrc", "zellij/config.kdl",
         "bash/fzf.sh",
-        "pandoc/md-preview.css",
+        "pandoc/md-preview.css", "pandoc/mermaid.html",
         "nvim/init.lua", "nvim/nvim-pack-lock.json", "nvim/.stylua.toml",
     ):
         planned.append((config_home / relative, REPO / ".config" / relative, None))
