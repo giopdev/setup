@@ -56,7 +56,8 @@ SystemName implements x feature with y
 - Do not link editable figure sources in documentation prose.
 - Prefer D2 for architecture and flow diagrams, Graphviz for dependency graphs and trees, PlantUML for sequence diagrams, and TikZ for precise mathematical or publication figures.
 - Keep editable figure sources alongside documentation and export to SVG (Scalable Vector Graphics) for Markdown or PDF for LaTeX. Use consistent typography, restrained colors, clear grouping, and labeled connections.
-- Use the figures in these papers as visual references; inspect the relevant figures when designing a similar illustration:
+- Keep figures high-level, like conference slides: one idea per figure, about six boxes or fewer, a few words per label, short labels on arrows, left-to-right flow. Leave function names, offsets, and limits to the prose. Keep figures compact enough to stay legible when Markdown scales them to a roughly 900px column.
+- Use the figures in these papers as visual references for typography, color, and grouping, simplified to that level; inspect the relevant figures when designing a similar illustration:
   - https://dl.acm.org/doi/pdf/10.1145/3719027.3765036
   - https://www.usenix.org/system/files/usenixsecurity25-gorter.pdf
   - https://arxiv.org/pdf/2609.17525
