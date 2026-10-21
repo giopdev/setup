@@ -17,14 +17,6 @@ disables these custom configs; a small local loader keeps Hyprland usable by
 falling back to its system defaults (or a minimal desktop if none are available).
 Install aether separately to manage themes and wallpapers.
 
-## Coding agent instructions
-
-Edit `.codex/AGENTS.md` to update the shared global instructions. The installer
-links this file to both `~/.codex/AGENTS.md` for
-[Codex](https://developers.openai.com/codex/guides/agents-md/) and
-`~/.claude/CLAUDE.md` for
-[Claude Code](https://code.claude.com/docs/en/memory).
-
 ## Markdown previews
 
 Run `md path/to/file.md` in Bash to open a styled Pandoc preview in your browser.
