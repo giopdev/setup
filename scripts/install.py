@@ -137,7 +137,7 @@ def operations(config_home, monitors):
     ]
     for relative in (
         "hypr/hyprpaper.conf", "hypr/apply-wallpaper.py",
-        "waybar/config", "waybar/style.css",
+        "waybar/config", "waybar/style.css", "waybar/updates.sh",
         "kitty/kitty.conf", "dunst/dunstrc", "zellij/config.kdl",
         "bash/fzf.sh",
         "pandoc/md-preview.css", "pandoc/mermaid.html",

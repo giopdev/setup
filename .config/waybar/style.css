@@ -21,6 +21,7 @@ window#waybar {
 }
 
 #workspaces,
+#custom-updates,
 #tray,
 #cpu,
 #memory,
@@ -95,6 +96,7 @@ window#waybar {
     color: @muted;
 }
 
+#custom-updates,
 #custom-aether,
 #network,
 #pulseaudio,

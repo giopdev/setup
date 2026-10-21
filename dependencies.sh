@@ -38,6 +38,8 @@ PACKAGES=(
   brightnessctl
   neovim
   waybar
+  # checkupdates for the Waybar update counter.
+  pacman-contrib
   # Image decoding for Waybar tray icons.
   glycin
   dunst

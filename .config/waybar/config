@@ -8,7 +8,7 @@
     "margin-right": 0,
     "modules-left": ["ext/workspaces", "custom/playerctl", "custom/playerlabel"],
     "modules-center": ["cpu", "memory", "disk"],
-    "modules-right": ["tray", "custom/aether", "network", "pulseaudio", "battery", "clock"],
+    "modules-right": ["custom/updates", "tray", "custom/aether", "network", "pulseaudio", "battery", "clock"],
     // Modules configuration 
 	"clock": {
 		"format": "  {:%H:%M}",
@@ -100,6 +100,14 @@
           "format-alt": "󰈀 {ifname}: {ipaddr}/{cidr}",
           "tooltip-format": "{essid}",
           "on-click-right": "nm-connection-editor"
+	},
+
+	"custom/updates": {
+		"exec": "~/.config/waybar/updates.sh",
+		"return-type": "json",
+		"interval": 1800,
+		"signal": 9,
+		"on-click": "kitty -e yay; pkill -RTMIN+9 waybar"
 	},
 
 	"tray": {
