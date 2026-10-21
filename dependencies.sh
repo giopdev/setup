@@ -34,6 +34,7 @@ PACKAGES=(
   slurp
   hyprshot
   hyprpicker
+  hyprpolkitagent
   wl-clipboard
   brightnessctl
   neovim

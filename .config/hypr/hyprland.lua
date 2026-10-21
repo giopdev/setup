@@ -62,6 +62,7 @@ local lockScreen = "pidof hyprlock >/dev/null || hyprlock"
 hl.on("hyprland.start", function ()
     hl.exec_cmd("pidof hypridle >/dev/null || hypridle")
     hl.exec_cmd("pidof waybar >/dev/null || (systemctl --user start waybar.service || waybar)")
+    hl.exec_cmd("pidof hyprpolkitagent >/dev/null || systemctl --user start hyprpolkitagent.service || /usr/lib/hyprpolkitagent/hyprpolkitagent")
     hl.exec_cmd("blueman-applet")
     hl.exec_cmd("python3 \"${XDG_CONFIG_HOME:-$HOME/.config}/hypr/apply-wallpaper.py\"")
 end)

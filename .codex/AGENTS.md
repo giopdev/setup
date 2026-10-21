@@ -1,5 +1,6 @@
 ## General
  - If I ask a question it doesn't always mean I want you to implement something, instead I might be trying to discuss something
+ - When root privileges are needed, use `pkexec` so the desktop polkit authentication agent (`hyprpolkitagent`) prompts me, instead of `sudo`
 
 ## Coding Standards
 - In general try to follow YAGNI (You Are Not Gonna Need It) to avoid over abstracting
