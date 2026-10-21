@@ -133,6 +133,7 @@ def operations(config_home, monitors):
     planned = [
         (Path.home() / ".bashrc", REPO / ".bashrc", None),
         (Path.home() / ".codex/AGENTS.md", REPO / ".codex/AGENTS.md", None),
+        (Path.home() / ".claude/CLAUDE.md", REPO / ".codex/AGENTS.md", None),
     ]
     for relative in (
         "hypr/hyprpaper.conf", "hypr/apply-wallpaper.py",
